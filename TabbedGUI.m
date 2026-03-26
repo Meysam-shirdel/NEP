@@ -6,7 +6,7 @@ function TabbedGUI()
    
  
     %iconPath = fullfile(pwd,'icon.png');
-    
+       
    
     fig1 = uifigure( ...
         'Name', 'NEP', ...
