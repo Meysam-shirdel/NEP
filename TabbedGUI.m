@@ -73,7 +73,7 @@ function TabbedGUI()
     % p.Position = [100,5,650,310];
     % resimg= uiimage(p,"ImageSource",'BaselinePrelimFindPeaks.jpg', Position=[50,10,300,280]);
     resimg= uiimage(tab22,"ImageSource",'BaselinePrelimFindPeaks.jpg', Position=[300,5,240,240]);
-    
+     
     lstbx2= uilistbox(tab22,Position=[20,250,790,60],FontColor='#1A873A',Items={},...
         ValueChangedFcn= @(src,event) showimage(src.Value, lstbx.Value ));
 
