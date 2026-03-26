@@ -3,7 +3,7 @@
 
 
 # How to use:
-- Clone the repository into Matlab
+- Clone the repository into Matlab using its url
 - Run TabbedGUI madule
 
 
