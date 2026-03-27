@@ -10,7 +10,7 @@ for i=1 :numel(subjects)
     edffilename =edffullpath(1).name;
     substring = split(edffullpath.folder, slashtype);
     editedpath=  [slashtype substring{2} slashtype substring{3} slashtype substring{4}...
-        slashtype '02 Files to be Edited' slashtype substring{6}];
+       slashtype substring{5} slashtype '02 Files to be Edited' slashtype substring{7}];
     if ~exist(editedpath)
         mkdir(editedpath)
     end

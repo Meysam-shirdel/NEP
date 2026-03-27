@@ -82,13 +82,13 @@ runBtn = uibutton(tab22, ...
     'Position', [20 345 200 40], ...
     'ButtonPushedFcn', @(btn,event) runProgram(fig1, pathFielddest.Value, lstbx));
 
-band1= uieditfield(tab22,'numeric', Position=[330,350,40,30], Enable='on');
+band1= uieditfield(tab22,'numeric', Position=[330,350,40,30], Enable='on',Value=10);
 band1.ValueChangedFcn = @(src,event) disp(src.Value);
 bnd1lbl = uilabel(tab22, ...
     'Text', 'Lower band',  ...
     'Position', [250 330 80 60],FontSize=12, FontName='Arial',FontWeight='bold');
 
-band2= uieditfield(tab22,'numeric', Position=[460,350,40,30], Enable='on');
+band2= uieditfield(tab22,'numeric', Position=[460,350,40,30], Enable='on',Value=45);
 band2.ValueChangedFcn = @(src,event) disp(src.Value);
 
 bnd2lbl = uilabel(tab22, ...
@@ -155,7 +155,7 @@ lstbx122= uilistbox(tab12,Position=[20,280,790,60],FontColor='#1A873A',Items={},
 
         substring = split(path, slashtype);
         editedpath= [slashtype substring{2} slashtype substring{3} slashtype substring{4}...
-            slashtype '02 Files to be Edited' slashtype substring{6} slashtype 'JERFigures' slashtype imgname];
+            slashtype substring{5} slashtype '02 Files to be Edited' slashtype substring{7} slashtype 'JERFigures' slashtype imgname];
 
         resimg.ImageSource=editedpath;
     end
@@ -169,7 +169,7 @@ lstbx122= uilistbox(tab12,Position=[20,280,790,60],FontColor='#1A873A',Items={},
 
         substring = split(selectedItem.Value, slashtype);
         editedpath= [slashtype substring{2} slashtype substring{3} slashtype substring{4}...
-            slashtype '02 Files to be Edited' slashtype substring{6} slashtype 'JERFigures'];
+            slashtype substring{5} slashtype '02 Files to be Edited' slashtype substring{7} slashtype 'JERFigures'];
 
         jpgs = dir(fullfile(editedpath, '*.jpg'));
 
@@ -239,13 +239,13 @@ lstbx122= uilistbox(tab12,Position=[20,280,790,60],FontColor='#1A873A',Items={},
             return;
         end
 
-        %d = uiprogressdlg(fig,'Title','Processing','Indeterminate','on');
-
-        %drawnow
+        % d = uiprogressdlg(fig,'Title','Processing','Indeterminate','on');
+        % 
+        % drawnow
 
         ProgramToGetQRSTemplateLimitedOutput(dest,lstbx.Items);
 
-        %close(d)
+        % close(d)
 
         msgbox('Processing Completed Successfully.');
         %statusLabel.Text = 'Status: Done!';
