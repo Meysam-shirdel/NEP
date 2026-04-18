@@ -185,9 +185,17 @@ end
 nToCopy = min(numel(filesToCopy), maxToProcess);
 fprintf('Copying %d file(s) (maxToProcess=%g)...\n\n', nToCopy, maxToProcess);
 
-filesToCopy= unique(filesToCopy)
+
+h = waitbar(5,'Starting...','Position', [500 300 300 75]);
+%set(h, 'Position', [500 300 300 75]);
+
+filesToCopy= unique(filesToCopy);
+N=numel(filesToCopy);
 readytofilterlst={};
+waitbar(5/100, h, sprintf('Remaining: %3.0f%%', 100*(1-5/100)));
+
 for j = 1:numel(filesToCopy)  %nToCopy
+    
     tlName = char(filesToCopy(j));
     fprintf('Now copying %s ...\n', tlName);
 
@@ -227,8 +235,11 @@ for j = 1:numel(filesToCopy)  %nToCopy
 
     % Optional: update map so subsequent runs in same MATLAB session can skip faster
     timelogIndex(lower(tlName)) = {fullfile(destFolderPath, tlName)};
-end
 
+    waitbar(j/N, h, sprintf('Remaining: %3.0f%%', 100*(1-j/N)));
+    
+end
+close(h);
 elapsedTime = toc;
 fprintf('\n====================\n');
 fprintf('Done. Total runtime: %.2f seconds (%.2f minutes)\n', ...

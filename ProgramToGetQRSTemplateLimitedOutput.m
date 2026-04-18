@@ -1,16 +1,22 @@
-function []=ECGAndIBIFromEDFWithQRSFilter(dest,subjects);
+function []=ECGAndIBIFromEDFWithQRSFilter(dest,subjects, filterband);
 %load the file with ECG, ecg30-45 which is the cwt from 30 to 45 hz
 slashtype='\';
 if isunix;slashtype='/';end
 subjectfolder=[cd slashtype];
 %subjectfolder=dest %[cd slashtype dest ];
 
-for i=1 :numel(subjects)
+h = waitbar(3,'Starting...','Position', [500 300 300 75]);
+Ns=numel(subjects);
+waitbar(5/100, h, sprintf('Remaining: %3.0f%%', 100*(1-5/100)))
+for i=1 :Ns %numel(subjects)
+    
+    
+    drawnow
     edffullpath = dir(fullfile(subjects{i}, '*.edf'));
     edffilename =edffullpath(1).name;
     substring = split(edffullpath.folder, slashtype);
     editedpath=  [slashtype substring{2} slashtype substring{3} slashtype substring{4}...
-       slashtype substring{5} slashtype '02 Files to be Edited' slashtype substring{7}];
+        slashtype substring{5} slashtype '02 Files to be Edited' slashtype substring{7}];
     if ~exist(editedpath)
         mkdir(editedpath)
     end
@@ -53,7 +59,7 @@ for i=1 :numel(subjects)
 
     if ~length(tempobj.ecg)
         disp(['read edf ' filename]);
-        if ~isunix                              % Is changed to avoid 
+        if ~isunix                              % Is changed to avoid
             [hdr data]=edfread(edffilename);
             ecg=data(1,:);
         else
@@ -71,7 +77,7 @@ for i=1 :numel(subjects)
         splitstring=split(header.StartTime,'.');
         if splitstring{1} == '12';splitstring(1)='24';end;
         tempobj.edfstarttime=str2num(splitstring{1})*60*60 + str2num(splitstring{2})*60 + str2num(splitstring{3});
-        save([editedpath slashtype ecgdataname],'tempobj');
+        save([editedpath slashtype ecgdataname],'tempobj'); %t###########################
     else
         ecg=tempobj.ecg;
         samplerate=tempobj.samplerate;
@@ -79,8 +85,8 @@ for i=1 :numel(subjects)
 
     if ~length(tempobj.ecg_icwt)
         disp('do cwt');
-        tempobj=tempobj.filterecg;
-        save([edffullpath.folder slashtype tempobj.filename],'tempobj');
+        tempobj=tempobj.filterecg(filterband);
+        save([edffullpath.folder slashtype tempobj.filename],'tempobj'); %t####################
     else
         disp('ecg_icwt already exists');
     end
@@ -151,8 +157,9 @@ for i=1 :numel(subjects)
     sessionend=max(int32(timelogtable.End_min__Elapsed(:)*samplerate*60));
     sessionend=min(sessionend+5*samplerate,length(ecg));
 
-    figure;
+    figure('Visible','off');
     subplot(1,3,1);
+    
     hold on;
     plot(ecg(plottimestart:plottimeend));
     subplot(1,3,2);
@@ -163,7 +170,7 @@ for i=1 :numel(subjects)
     plot(ecg30_45(plottimestart:plottimeend));
     saveas(gcf,[editedpath slashtype 'JERFigures',filesep,'BaselineData.jpg']);
 
-    figure;
+    figure('Visible','off');
     subplot(1,3,1);
     hold on;
     plot(ecg(plottimestart:plottimestart10));
@@ -212,7 +219,7 @@ for i=1 :numel(subjects)
 
     qrstemplate=zeros(1,lengthtemplate);
 
-    figure;
+    figure('Visible','off');
     for i=1:length(loc);
         ecgstartloc=int32(loc(i)-sampleoffset);
         ecgendloc=int32(loc(i)+sampleoffset);
@@ -300,7 +307,7 @@ for i=1 :numel(subjects)
     [pk loc]=findpeaks(ecg10_45(plottimestart:plottimeend),'minpeakheight',minpeakheight,'minpeakdistance',samplerate*.1);
     meanpeakdistance=prctile(diff(loc),10)*.5;
     [pk loc]=findpeaks(ecg10_45,'minpeakheight',minpeakheight,'minpeakdistance',meanpeakdistance);
-    figure;
+    figure('Visible','off');
     subplot(2,3,1);
     plot(plottimestart:plottimestart10,ecg10_45(plottimestart:plottimestart10));
     hold on
@@ -384,9 +391,8 @@ for i=1 :numel(subjects)
         disp(['write the IBI file ' outputibifilename]);
         writematrix(ibioutput,[editedpath slashtype 'JERFiles' filesep outputibifilename],'delimiter','tab');
     end
-
-
-
+    
+   waitbar(i/Ns, h, sprintf('Remaining: %3.0f%%', 100*(1-i/Ns)))
 
 end
-
+close(h)

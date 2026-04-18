@@ -14,26 +14,26 @@ classdef Bradshaw_ECGData
 
 
     methods
-        function obj = filterecg(obj, band1, band2, order)
+        function obj = filterecg(obj, band1)
             %ECG bandpass filtering.
            
             % Default bands
             if nargin < 2 || isempty(band1), band1 = [10 45]; end
-            if nargin < 3 || isempty(band2), band2 = [30 45]; end
-            if nargin < 4 || isempty(order), order = 4; end
+            %if nargin < 2 || isempty(band1), band2 = [30 45]; end
+            band2 = [30 45];
+            order = 4;
 
-            
-             if isempty(obj.ecg)
+            if isempty(obj.ecg)
                  error('Bradshaw_ECGData:filterecg:NoECG', ...
                        'obj.ecg is empty. Load ECG before filtering.');
-             end
+            end
 
             fs = double(obj.samplerate);
             x = double(obj.ecg(:));
 
             nyq = fs / 2;
 
-            % Butterworth bandpass filters
+            % Butterworth bandpass filter
             [b1, a1] = butter(order, band1 / nyq, 'bandpass');
             [b2, a2] = butter(order, band2 / nyq, 'bandpass');
 
